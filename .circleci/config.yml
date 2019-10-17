@@ -12,8 +12,5 @@ jobs:
       - checkout
       - run: ls -lah
       - run:
-          name: "test"
-          command: gradlew clean test
-      - run:
           command: echo 'This is powershell'
           shell: powershell.exe
