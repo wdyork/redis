@@ -12,8 +12,8 @@ jobs:
       - checkout
       - run: ls -lah
       - run:
-          command: ping circleci.com
-          shell: cmd.exe
+          name: "test"
+          command: gradlew clean test
       - run:
           command: echo 'This is powershell'
           shell: powershell.exe
