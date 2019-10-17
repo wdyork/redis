@@ -1,0 +1,19 @@
+version: 2.1
+
+orbs:
+  win: circleci/windows@1.0.0
+
+jobs:
+  build:
+    executor:
+      name: win/vs2019
+      shell: bash.exe
+    steps:
+      - checkout
+      - run: ls -lah
+      - run:
+          command: ping circleci.com
+          shell: cmd.exe
+      - run:
+          command: echo 'This is powershell'
+          shell: powershell.exe
