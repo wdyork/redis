@@ -20,21 +20,6 @@ jobs:
           paths:
             - ./*
       - run: echo "====================构建完毕=============================="
-  deploy:
-    machine:
-      timezone:
-        Asia/Shanghai # 设置上海时区
-      enabled: true
-    working_directory: /tmp/workspace
-    steps:
-      - run: echo "====================部署开始=============================="
-      - attach_workspace:
-          at: /tmp/workspace
-      - run: pwd && ls -al
-      - run:
-          name: Deploy Over SSH
-          command: ./.circleci/deploy-master.sh
-      - run: echo "====================部署完毕=============================="
 
 workflows:
   version: 2
