@@ -1,16 +1,49 @@
 version: 2.1
-
-orbs:
-  win: circleci/windows@1.0.0
-
 jobs:
   build:
-    executor:
-      name: win/vs2019
-      shell: bash.exe
+    docker:
+      - image: circleci/php:7.1-browsers
+    working_directory: /tmp/workspace
     steps:
+      - run: echo "====================构建开始=============================="
       - checkout
-      - run: ls -lah
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "composer.json" }}
+            # 如果没有匹配的缓存则使用最新的缓存
+            - v1-dependencies-
+      - run: composer install -n --prefer-dist
+      # 运行单元测试
+      #      - run: phpunit
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./*
+      - run: echo "====================构建完毕=============================="
+  deploy:
+    machine:
+      timezone:
+        Asia/Shanghai # 设置上海时区
+      enabled: true
+    working_directory: /tmp/workspace
+    steps:
+      - run: echo "====================部署开始=============================="
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: pwd && ls -al
       - run:
-          command: echo 'This is powershell'
-          shell: powershell.exe
+          name: Deploy Over SSH
+          command: ./.circleci/deploy-master.sh
+      - run: echo "====================部署完毕=============================="
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
